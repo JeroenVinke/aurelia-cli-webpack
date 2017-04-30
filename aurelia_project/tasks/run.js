@@ -1,11 +1,12 @@
-const Server = require('webpack-dev-server');
 import {compiler, config} from './build';
-const open = require('opn');
-const yargs = require('yargs');
-const url = require('url');
-const argv = yargs.argv;
+import Server from 'webpack-dev-server';
+import open from 'opn';
+import yargs from 'yargs';
+import url from 'url';
+import project from '../aurelia.json';
 import {CLIOptions} from 'aurelia-cli';
 
+const argv = yargs.argv;
 argv.color = require('supports-color');
 
 function run(done) {
@@ -17,7 +18,7 @@ function run(done) {
     hot: false,
     hotOnly: false,
     clientLogLevel: 'info',
-    port: 8080,
+    port: project.platform.port,
     open: false,
     stats: {
       cached: false,
@@ -86,86 +87,4 @@ function colorInfo(useColor, msg) {
   return msg;
 }
 
-
 export { run as default };
-
-
-
-
-
-// import gulp from 'gulp';
-// import browserSync from 'browser-sync';
-// import historyApiFallback from 'connect-history-api-fallback/lib';
-// import project from '../aurelia.json';
-// import build from './build';
-// import {CLIOptions} from 'aurelia-cli';
-
-// function log(message) {
-//   console.log(message); //eslint-disable-line no-console
-// }
-
-// function onChange(path) {
-//   log(`File Changed: ${path}`);
-// }
-
-// function reload(done) {
-//   browserSync.reload();
-//   done();
-// }
-
-// let serve = gulp.series(
-//   build,
-//   done => {
-//     browserSync({
-//       online: false,
-//       open: false,
-//       port: 9000,
-//       logLevel: 'silent',
-//       server: {
-//         baseDir: [project.platform.baseDir],
-//         middleware: [historyApiFallback(), function(req, res, next) {
-//           res.setHeader('Access-Control-Allow-Origin', '*');
-//           next();
-//         }]
-//       }
-//     }, function(err, bs) {
-//       if (err) return done(err);
-//       let urls = bs.options.get('urls').toJS();
-//       log(`Application Available At: ${urls.local}`);
-//       log(`BrowserSync Available At: ${urls.ui}`);
-//       done();
-//     });
-//   }
-// );
-
-// let refresh = gulp.series(
-//   build,
-//   reload
-// );
-
-// let watch = function(refreshCb, onChangeCb) {
-//   return function(done) {
-//     gulp.watch(project.transpiler.source, refreshCb).on('change', onChangeCb);
-//     gulp.watch(project.markupProcessor.source, refreshCb).on('change', onChangeCb);
-//     gulp.watch(project.cssProcessor.source, refreshCb).on('change', onChangeCb);
-
-//     //see if there are static files to be watched
-//     if (typeof project.build.copyFiles === 'object') {
-//       const files = Object.keys(project.build.copyFiles);
-//       gulp.watch(files, refreshCb).on('change', onChangeCb);
-//     }
-//   };
-// };
-
-// let run;
-
-// if (CLIOptions.hasFlag('watch')) {
-//   run = gulp.series(
-//     serve,
-//     watch(refresh, onChange)
-//   );
-// } else {
-//   run = serve;
-// }
-
-// export { run as default, watch };

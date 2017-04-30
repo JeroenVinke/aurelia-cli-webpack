@@ -1,8 +1,15 @@
-const webpackConfig = require('../../webpack.config');
-const webpack = require('webpack');
+import webpackConfig from '../../webpack.config';
+import webpack from 'webpack';
+import project from '../aurelia.json';
+import {CLIOptions, BuildOptions} from 'aurelia-cli';
 
-// production, server, extractCss, coverage
-const config = webpackConfig(false, true, false, false);
+const buildOptions = new BuildOptions(project.build.options);
+const isProd = CLIOptions.getEnvironment() === 'prod';
+const server = buildOptions.isApplicable('server');
+const extractCss = buildOptions.isApplicable('extractCss');
+const coverage = buildOptions.isApplicable('coverage');
+
+const config = webpackConfig(isProd, server, extractCss, coverage);
 const compiler = webpack(config);
 
 function build(done) {
@@ -25,30 +32,3 @@ export {
   compiler,
   build as default
 };
-
-// import gulp from 'gulp';
-// import transpile from './transpile';
-// import processMarkup from './process-markup';
-// import processCSS from './process-css';
-// import copyFiles from './copy-files';
-// import {build} from 'aurelia-cli';
-// import project from '../aurelia.json';
-
-// export default gulp.series(
-//   readProjectConfiguration,
-//   gulp.parallel(
-//     transpile,
-//     processMarkup,
-//     processCSS,
-//     copyFiles
-//   ),
-//   writeBundles
-// );
-
-// function readProjectConfiguration() {
-//   return build.src(project);
-// }
-
-// function writeBundles() {
-//   return build.dest();
-// }
