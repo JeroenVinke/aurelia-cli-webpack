@@ -4,12 +4,14 @@
   "platform": {
     "id": "web",
     "displayName": "Web",
-    "port": 8080
+    "port": 8080,
+    "hmr": false,
+    "open": false
   },
   "build": {
     "options": {
-      "devserver": "dev",
-      "extractCss": true,
+      "server": "dev",
+      "extractCss": "prod",
       "coverage": "dev"
     }
   },

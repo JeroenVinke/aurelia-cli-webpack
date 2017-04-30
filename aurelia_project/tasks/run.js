@@ -1,4 +1,5 @@
-import {compiler, config} from './build';
+import {config} from './build';
+import webpack from 'webpack';
 import Server from 'webpack-dev-server';
 import open from 'opn';
 import yargs from 'yargs';
@@ -15,11 +16,15 @@ function run(done) {
     publicPath: config.output.publicPath,
     filename: config.output.filename,
     watchOptions: undefined,
-    hot: false,
-    hotOnly: false,
+    hot: project.platform.hmr,
     clientLogLevel: 'info',
     port: project.platform.port,
-    open: false,
+
+    contentBase: config.output.path,
+    // serve index.html for all 404 (required for push-state)
+    historyApiFallback: true,
+
+    open: project.platform.open,
     stats: {
       cached: false,
       cachedAssets: false,
@@ -31,6 +36,12 @@ function run(done) {
     opts.watch = false;
   }
 
+  if (project.platform.hmr) {
+    config.plugins.push(new webpack.HotModuleReplacementPlugin());
+    config.entry.app.unshift(`webpack-dev-server/client?http://${opts.host}:${opts.port}/`, 'webpack/hot/dev-server');
+  }
+
+  const compiler = webpack(config);
   let server = new Server(compiler, opts);
 
   server.listen(opts.port, opts.host, function(err) {

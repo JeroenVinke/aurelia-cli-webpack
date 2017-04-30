@@ -9,7 +9,9 @@ const server = buildOptions.isApplicable('server');
 const extractCss = buildOptions.isApplicable('extractCss');
 const coverage = buildOptions.isApplicable('coverage');
 
-const config = webpackConfig(isProd, server, extractCss, coverage);
+const config = webpackConfig({
+  isProd, server, extractCss, coverage
+});
 const compiler = webpack(config);
 
 function build(done) {
@@ -29,6 +31,5 @@ function onBuild(err, stats) {
 
 export {
   config,
-  compiler,
   build as default
 };
